@@ -1,0 +1,58 @@
+version: '3.4'
+
+services:
+  finance.api:
+    image: ${DOCKER_REGISTRY-}financeapi
+    container_name: Finance.Api
+    build:
+      context: .
+      dockerfile: src/Finance.Api/Dockerfile
+    depends_on:
+      - finance-db
+    links:
+      - finance-db
+    networks:
+      - postgres
+
+  finance-db:
+    image: postgres:latest
+    container_name: Finance.Db
+    environment:
+      POSTGRES_DB: finance
+      POSTGRES_USER: olliver
+      POSTGRES_PASSWORD: q1w2e3r4
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./.containers/database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: teste@teste.com
+      PGADMIN_DEFAULT_PASSWORD: q1w2e3r4
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - ./.containers/pgadmin:/var/lib/pgadmin
+
+    ports:
+      - "8082:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+  finance-seq:
+    image: datalust/seq:latest
+    container_name: Finance.Seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5431:5431
+      - 8083:81
+
+networks:
+  postgres:
+    driver: bridge
