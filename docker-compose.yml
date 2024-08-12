@@ -29,6 +29,21 @@ services:
     networks:
       - postgres
 
+  finance-idp:
+    image: jboss/keycloak:latest
+    container_name: Finance.Identity
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_IMPORT=/tmp/finance-realm-export.json
+    volumes:
+      - ./.containers/identity:/opt/jboss/keycloak/standalone/data
+      - ./.files/finance-realm-export.json:/tmp/finance-realm-export.json
+    ports:
+      - 18080:8080
+    networks:
+      - postgres
+
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
