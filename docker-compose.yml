@@ -8,14 +8,15 @@ services:
       context: .
       dockerfile: src/Finance.Api/Dockerfile
     depends_on:
-      - finance-db
+      finance-db:
+        condition: service_healthy
     links:
       - finance-db
     networks:
       - postgres
 
   finance-db:
-    image: postgres:latest
+    image: postgres:17
     container_name: Finance.Db
     environment:
       POSTGRES_DB: finance
@@ -28,17 +29,23 @@ services:
       - 5432:5432
     networks:
       - postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U olliver -d finance"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   finance-idp:
-    image: jboss/keycloak:latest
+    image: keycloak/keycloak:latest
     container_name: Finance.Identity
+    command: start-dev --import-realm
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - KEYCLOAK_IMPORT=/tmp/finance-realm-export.json
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
     volumes:
-      - ./.containers/identity:/opt/jboss/keycloak/standalone/data
-      - ./.files/finance-realm-export.json:/tmp/finance-realm-export.json
+      - ./.containers/identity:/opt/keycloak/data
+      - ./.files/finance-realm-export.json:/opt/keycloak/data/import/finance-realm-export.json
     ports:
       - 18080:8080
     networks:
@@ -64,9 +71,12 @@ services:
     container_name: Finance.Seq
     environment:
       - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=true
     ports:
-      - 5431:5431
-      - 8083:81
+      - 5431:5341
+      - 8083:80
+    networks:
+      - postgres
 
 networks:
   postgres:
