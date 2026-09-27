@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Finance.Api", "src\Finance.
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{A0228E67-9A4A-4D7F-ACAC-BC11E71E1771}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.ArchitectureTests", "test\Finance.ArchitectureTests\Finance.ArchitectureTests.csproj", "{0E59DAD4-DB78-4DB2-BD72-550B6D5B7BD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Finance.ArchitectureTests", "test\Finance.ArchitectureTests\Finance.ArchitectureTests.csproj", "{0E59DAD4-DB78-4DB2-BD72-550B6D5B7BD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
