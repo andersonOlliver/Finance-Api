@@ -15,8 +15,8 @@ public sealed class Payment : Entity
 
     private Payment() { }
 
-    public Name Name { get; init; }
-    public PaymentType Type { get; init; }
+    public Name Name { get; private set; }
+    public PaymentType Type { get; private set; }
     public Guid? UserId { get; init; }
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? UpdatedOnUtc { get; private set; }
@@ -24,5 +24,12 @@ public sealed class Payment : Entity
     public static Payment Create(Guid id, Name name, PaymentType type, Guid? userId, DateTime createdOnUtc)
     {
         return new Payment(id, name, type, userId, createdOnUtc);
+    }
+
+    public void Update(Name name, PaymentType type, DateTime updatedOnUtc)
+    {
+        Name = name;
+        Type = type;
+        UpdatedOnUtc = updatedOnUtc;
     }
 }

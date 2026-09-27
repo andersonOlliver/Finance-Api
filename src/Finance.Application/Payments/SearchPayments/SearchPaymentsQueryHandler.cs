@@ -1,30 +1,30 @@
 using Dapper;
+using Finance.Application.Abstractions.Authentication;
 using Finance.Application.Abstractions.Data;
 using Finance.Application.Abstractions.Messaging;
 using Finance.Domain.Abstracts;
 
 namespace Finance.Application.Payments.SearchPayments;
 
-internal sealed class SearchPaymentsQueryHandler : IQueryHandler<SearchPaymentsQuery, IReadOnlyList<PaymentResponse>>
+internal sealed class SearchPaymentsQueryHandler(
+    ISqlConnectionFactory sqlConnectionFactory,
+    IUserContext userContext) : IQueryHandler<SearchPaymentsQuery, IReadOnlyList<PaymentResponse>>
 {
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public SearchPaymentsQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
-
     public async Task<Result<IReadOnlyList<PaymentResponse>>> Handle(SearchPaymentsQuery request, CancellationToken cancellationToken)
     {
-        using var connection = _sqlConnectionFactory.CreateConnection();
+        using var connection = sqlConnectionFactory.CreateConnection();
 
         const string sql = """
             SELECT
-                p.*
+                p.id AS Id,
+                p.name AS Name,
+                p.type AS Type,
+                p.user_id AS UserId
             FROM payments AS p
+            WHERE p.user_id IS NULL OR p.user_id = @UserId
             """;
 
-        var payments = await connection.QueryAsync<PaymentResponse>(sql);
+        var payments = await connection.QueryAsync<PaymentResponse>(sql, new { userContext.UserId });
 
         return payments.ToList();
     }
