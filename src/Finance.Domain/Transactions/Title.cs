@@ -20,10 +20,10 @@ public record Title
     public static Result<Title> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            return Result.Failure<Title>(MaxLenghtError);
+            return Result.Failure<Title>(NullError);
 
         if (value.Length > MaxLenght)
-            return Result.Failure<Title>(NullError);
+            return Result.Failure<Title>(MaxLenghtError);
 
         return new Title(value);
     }
