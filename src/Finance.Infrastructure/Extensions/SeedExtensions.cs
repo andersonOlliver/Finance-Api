@@ -59,6 +59,7 @@ public static class SeedExtensions
                 Payment.Create(Guid.NewGuid(), new Name("Débito"), PaymentType.Debit, null, DateTime.UtcNow),
                 Payment.Create(Guid.NewGuid(), new Name("Crédito"), PaymentType.CashCredit, null, DateTime.UtcNow),
                 Payment.Create(Guid.NewGuid(), new Name("Crédito Parcelado"), PaymentType.InstallmentCredit, null, DateTime.UtcNow),
+                Payment.Create(Guid.NewGuid(), new Name("Pix"), PaymentType.Pix, null, DateTime.UtcNow),
         });
         }
         return dbContext;

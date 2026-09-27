@@ -18,4 +18,7 @@ public enum PaymentType
 
     [Description("Boleto")]
     Slip = 5,
+
+    [Description("Pix")]
+    Pix = 6,
 }
