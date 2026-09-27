@@ -36,10 +36,10 @@ internal sealed class SearchTransactionsQueryHandler(
             INNER JOIN categories AS c ON c.id = t.category_id
             LEFT JOIN payments AS p ON p.id = t.payment_id
             WHERE t.user_id = @UserId
-                AND (@CategoryId IS NULL OR t.category_id = @CategoryId)
-                AND (@PaymentId IS NULL OR t.payment_id = @PaymentId)
-                AND (@From IS NULL OR t.released_on_utc >= @From)
-                AND (@To IS NULL OR t.released_on_utc <= @To)
+                AND (@CategoryId::uuid IS NULL OR t.category_id = @CategoryId::uuid)
+                AND (@PaymentId::uuid IS NULL OR t.payment_id = @PaymentId::uuid)
+                AND (@From::timestamptz IS NULL OR t.released_on_utc >= @From::timestamptz)
+                AND (@To::timestamptz IS NULL OR t.released_on_utc <= @To::timestamptz)
             ORDER BY t.released_on_utc DESC
             """;
 
