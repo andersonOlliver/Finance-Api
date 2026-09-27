@@ -21,12 +21,15 @@ public static class SeedExtensions
     {
         if (!dbContext.Set<User>().Any())
         {
-            dbContext.Set<User>()
-                .Add(User.Create(
-                    new FirstName("Anderson"),
-                    new LastName("Olliver"),
-                    new Email("pla.olliver@gmail.com"),
-                    DateTime.UtcNow));
+            var user = User.Create(
+                new FirstName("Anderson"),
+                new LastName("Olliver"),
+                new Email("pla.olliver@gmail.com"),
+                DateTime.UtcNow);
+
+            user.SetIdentityId(string.Empty);
+
+            dbContext.Set<User>().Add(user);
         }
         return dbContext;
     }
