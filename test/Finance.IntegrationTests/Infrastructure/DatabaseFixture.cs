@@ -4,6 +4,7 @@ using Finance.Application.Abstractions.Clock;
 using Finance.Application.Abstractions.Data;
 using Finance.Domain.Abstracts;
 using Finance.Domain.Categories;
+using Finance.Domain.Payments;
 using Finance.Domain.Transactions;
 using Finance.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ public sealed class DatabaseFixture : IAsyncLifetime
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<ITransactionRepository, TestTransactionRepository>();
         services.AddScoped<ICategoryRepository, TestCategoryRepository>();
+        services.AddScoped<IPaymentRepository, TestPaymentRepository>();
         services.AddSingleton<ISqlConnectionFactory>(new TestSqlConnectionFactory(connectionString));
         services.AddSingleton<TestUserContextAccessor>();
         services.AddScoped<IUserContext, TestUserContext>();
