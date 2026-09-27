@@ -29,15 +29,15 @@ public sealed class Transaction : Entity
 
     private Transaction() { }
 
-    public Title Title { get; init; }
-    public Money Value { get; init; }
-    public Description? Description { get; init; }
+    public Title Title { get; private set; }
+    public Money Value { get; private set; }
+    public Description? Description { get; private set; }
     public Guid UserId { get; init; }
-    public Guid CategoryId { get; init; }
-    public Guid? PaymentId { get; init; }
-    public DateTime ReleasedOnUtc { get; init; }
+    public Guid CategoryId { get; private set; }
+    public Guid? PaymentId { get; private set; }
+    public DateTime ReleasedOnUtc { get; private set; }
     public DateTime CreatedOnUtc { get; init; }
-    public DateTime? UpdatedOnUtc { get; init; }
+    public DateTime? UpdatedOnUtc { get; private set; }
 
     public static Transaction Create(Guid id,
         Title title,
@@ -50,5 +50,23 @@ public sealed class Transaction : Entity
         DateTime createdOnUtc)
     {
         return new Transaction(id, title, value, description, userId, categoryId, paymentId, releasedOnUtc, createdOnUtc);
+    }
+
+    public void Update(
+        Title title,
+        Money value,
+        Description? description,
+        Guid categoryId,
+        Guid? paymentId,
+        DateTime releasedOnUtc,
+        DateTime updatedOnUtc)
+    {
+        Title = title;
+        Value = value;
+        Description = description;
+        CategoryId = categoryId;
+        PaymentId = paymentId;
+        ReleasedOnUtc = releasedOnUtc;
+        UpdatedOnUtc = updatedOnUtc;
     }
 }

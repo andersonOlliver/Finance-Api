@@ -21,4 +21,9 @@ internal abstract class Repository<T> where T : Entity
     {
         DbContext.Add(entity);
     }
+
+    public virtual void Remove(T entity)
+    {
+        DbContext.Remove(entity);
+    }
 }
