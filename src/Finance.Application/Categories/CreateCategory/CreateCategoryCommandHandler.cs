@@ -16,7 +16,7 @@ internal sealed class CreateCategoryCommandHandler(
     public async Task<Result<Guid>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         var category = Category.Create(
-            Guid.NewGuid(),
+            Guid.CreateVersion7(),
             new Name(request.Name),
             request.Type,
             new Color(request.Color),

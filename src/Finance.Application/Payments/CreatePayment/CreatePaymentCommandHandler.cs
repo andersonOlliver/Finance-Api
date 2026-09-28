@@ -16,7 +16,7 @@ internal sealed class CreatePaymentCommandHandler(
     public async Task<Result<Guid>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {
         var payment = Payment.Create(
-            Guid.NewGuid(),
+            Guid.CreateVersion7(),
             new Name(request.Name),
             request.Type,
             userContext.UserId,

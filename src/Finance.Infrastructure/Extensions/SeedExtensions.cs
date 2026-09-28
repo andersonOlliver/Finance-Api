@@ -41,9 +41,9 @@ public static class SeedExtensions
             dbContext.Set<Category>().AddRange(
                 new List<Category>()
                 {
-                    Category.Create(Guid.NewGuid(), new Name("Salário"), CategoryType.Receive, Color.Green, Icon.Money, DateTime.UtcNow),
-                    Category.Create(Guid.NewGuid(), new Name("Alimentação"), CategoryType.Expense, Color.Orange, Icon.Restaurant, DateTime.UtcNow),
-                    Category.Create(Guid.NewGuid(), new Name("Investimento"), CategoryType.Expense, Color.GreenLight, Icon.Wallet, DateTime.UtcNow)
+                    Category.Create(Guid.CreateVersion7(), new Name("Salário"), CategoryType.Receive, Color.Green, Icon.Money, DateTime.UtcNow),
+                    Category.Create(Guid.CreateVersion7(), new Name("Alimentação"), CategoryType.Expense, Color.Orange, Icon.Restaurant, DateTime.UtcNow),
+                    Category.Create(Guid.CreateVersion7(), new Name("Investimento"), CategoryType.Expense, Color.GreenLight, Icon.Wallet, DateTime.UtcNow)
                 }
             );
         }
@@ -55,11 +55,11 @@ public static class SeedExtensions
         if (!dbContext.Set<Payment>().Any())
         {
             dbContext.Set<Payment>().AddRange(new List<Payment>() {
-                Payment.Create(Guid.NewGuid(), new Name("Dinheiro"), PaymentType.Money, null, DateTime.UtcNow),
-                Payment.Create(Guid.NewGuid(), new Name("Débito"), PaymentType.Debit, null, DateTime.UtcNow),
-                Payment.Create(Guid.NewGuid(), new Name("Crédito"), PaymentType.CashCredit, null, DateTime.UtcNow),
-                Payment.Create(Guid.NewGuid(), new Name("Crédito Parcelado"), PaymentType.InstallmentCredit, null, DateTime.UtcNow),
-                Payment.Create(Guid.NewGuid(), new Name("Pix"), PaymentType.Pix, null, DateTime.UtcNow),
+                Payment.Create(Guid.CreateVersion7(), new Name("Dinheiro"), PaymentType.Money, null, DateTime.UtcNow),
+                Payment.Create(Guid.CreateVersion7(), new Name("Débito"), PaymentType.Debit, null, DateTime.UtcNow),
+                Payment.Create(Guid.CreateVersion7(), new Name("Crédito"), PaymentType.CashCredit, null, DateTime.UtcNow),
+                Payment.Create(Guid.CreateVersion7(), new Name("Crédito Parcelado"), PaymentType.InstallmentCredit, null, DateTime.UtcNow),
+                Payment.Create(Guid.CreateVersion7(), new Name("Pix"), PaymentType.Pix, null, DateTime.UtcNow),
         });
         }
         return dbContext;

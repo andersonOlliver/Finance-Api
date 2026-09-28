@@ -26,7 +26,7 @@ internal sealed class CreateTransactionCommandHandler(
         var description = request.Description is null ? null : new Description(request.Description);
 
         var transaction = Transaction.Create(
-            Guid.NewGuid(),
+            Guid.CreateVersion7(),
             titleResult.Value,
             value,
             description,

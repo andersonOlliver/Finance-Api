@@ -23,7 +23,7 @@ public sealed class User : Entity
 
     public static User Create(FirstName firstName, LastName lastName, Email email, DateTime createdOnUtc)
     {
-        var user = new User(Guid.NewGuid(), firstName, lastName, email, createdOnUtc);
+        var user = new User(Guid.CreateVersion7(), firstName, lastName, email, createdOnUtc);
         //user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
 
         //user._roles.Add(Role.Registered);
