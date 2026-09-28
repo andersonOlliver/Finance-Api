@@ -32,6 +32,16 @@ public class CreatePaymentCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WithValidCommand_ShouldGenerateAVersion7Id()
+    {
+        var command = new CreatePaymentCommand("Cartão Nubank", PaymentType.CashCredit);
+
+        var result = await _harness.Sender.Send(command);
+
+        result.Value.ToString()[14].Should().Be('7');
+    }
+
+    [Fact]
     public async Task Handle_WithEmptyName_ShouldThrowValidationException()
     {
         var command = new CreatePaymentCommand(string.Empty, PaymentType.CashCredit);

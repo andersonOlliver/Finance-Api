@@ -37,6 +37,17 @@ public class CreateTransactionCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WithValidCommand_ShouldGenerateAVersion7Id()
+    {
+        var command = new CreateTransactionCommand(
+            "Mercado", 150m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+
+        var result = await _harness.Sender.Send(command);
+
+        result.Value.ToString()[14].Should().Be('7');
+    }
+
+    [Fact]
     public async Task Handle_WithEmptyTitle_ShouldThrowValidationException()
     {
         var command = new CreateTransactionCommand(

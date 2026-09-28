@@ -32,6 +32,16 @@ public class CreateCategoryCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WithValidCommand_ShouldGenerateAVersion7Id()
+    {
+        var command = new CreateCategoryCommand("Lazer", CategoryType.Expense, "F2994A", "wallet");
+
+        var result = await _harness.Sender.Send(command);
+
+        result.Value.ToString()[14].Should().Be('7');
+    }
+
+    [Fact]
     public async Task Handle_WithEmptyName_ShouldThrowValidationException()
     {
         var command = new CreateCategoryCommand(string.Empty, CategoryType.Expense, "F2994A", "wallet");
