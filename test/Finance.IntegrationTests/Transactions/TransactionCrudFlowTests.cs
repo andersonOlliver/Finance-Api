@@ -71,7 +71,7 @@ public class TransactionCrudFlowTests(DatabaseFixture fixture)
             var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
             var createResult = await sender.Send(new CreateTransactionCommand(
-                "Mercado", 150m, "USD", "Compras do mês", categoryId, null, releasedOnUtc));
+                "Mercado", 150m, "USD", "Compras do mês", categoryId, null, null, releasedOnUtc));
 
             createResult.IsSuccess.Should().BeTrue();
             transactionId = createResult.Value;
@@ -81,7 +81,7 @@ public class TransactionCrudFlowTests(DatabaseFixture fixture)
         {
             var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
-            var searchResult = await sender.Send(new SearchTransactionsQuery(null, null, null, null));
+            var searchResult = await sender.Send(new SearchTransactionsQuery(null, null, null, null, null));
 
             searchResult.IsSuccess.Should().BeTrue();
             searchResult.Value.Should().ContainSingle(t =>
@@ -106,7 +106,7 @@ public class TransactionCrudFlowTests(DatabaseFixture fixture)
             var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
             var updateResult = await sender.Send(new UpdateTransactionCommand(
-                transactionId, "Mercado atualizado", 200m, "USD", null, categoryId, null, releasedOnUtc));
+                transactionId, "Mercado atualizado", 200m, "USD", null, categoryId, null, null, releasedOnUtc));
 
             updateResult.IsSuccess.Should().BeTrue();
         }
@@ -154,7 +154,7 @@ public class TransactionCrudFlowTests(DatabaseFixture fixture)
             var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
             var createResult = await sender.Send(new CreateTransactionCommand(
-                "Aluguel", 1200m, "USD", null, categoryId, null, DateTime.UtcNow));
+                "Aluguel", 1200m, "USD", null, categoryId, null, null, DateTime.UtcNow));
 
             transactionId = createResult.Value;
         }
@@ -169,7 +169,7 @@ public class TransactionCrudFlowTests(DatabaseFixture fixture)
             getResult.IsFailure.Should().BeTrue();
             getResult.Error.Should().Be(TransactionErrors.NotFound);
 
-            var searchResult = await sender.Send(new SearchTransactionsQuery(null, null, null, null));
+            var searchResult = await sender.Send(new SearchTransactionsQuery(null, null, null, null, null));
             searchResult.Value.Should().NotContain(t => t.Id == transactionId);
 
             var deleteResult = await sender.Send(new DeleteTransactionCommand(transactionId));

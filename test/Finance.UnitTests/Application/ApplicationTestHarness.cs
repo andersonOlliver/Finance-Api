@@ -5,6 +5,7 @@ using Finance.Domain.Abstracts;
 using Finance.Domain.Categories;
 using Finance.Domain.Payments;
 using Finance.Domain.Transactions;
+using Finance.Domain.Vehicles;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -16,6 +17,8 @@ internal sealed class ApplicationTestHarness
     public ITransactionRepository TransactionRepository { get; } = Substitute.For<ITransactionRepository>();
     public ICategoryRepository CategoryRepository { get; } = Substitute.For<ICategoryRepository>();
     public IPaymentRepository PaymentRepository { get; } = Substitute.For<IPaymentRepository>();
+    public IVehicleRepository VehicleRepository { get; } = Substitute.For<IVehicleRepository>();
+    public IVehicleRefuelRepository VehicleRefuelRepository { get; } = Substitute.For<IVehicleRefuelRepository>();
     public IUserContext UserContext { get; } = Substitute.For<IUserContext>();
     public IDateTimeProvider DateTimeProvider { get; } = Substitute.For<IDateTimeProvider>();
     public IUnitOfWork UnitOfWork { get; } = Substitute.For<IUnitOfWork>();
@@ -30,6 +33,8 @@ internal sealed class ApplicationTestHarness
         services.AddSingleton(TransactionRepository);
         services.AddSingleton(CategoryRepository);
         services.AddSingleton(PaymentRepository);
+        services.AddSingleton(VehicleRepository);
+        services.AddSingleton(VehicleRefuelRepository);
         services.AddSingleton(UserContext);
         services.AddSingleton(DateTimeProvider);
         services.AddSingleton(UnitOfWork);

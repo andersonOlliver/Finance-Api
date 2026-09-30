@@ -20,7 +20,7 @@ public class CreateTransactionCommandValidatorTests
     [Fact]
     public void Validate_WithValidCommand_ShouldNotHaveErrors()
     {
-        var command = new CreateTransactionCommand("Mercado", 150m, "USD", "Compras", Guid.NewGuid(), null, DateTime.UtcNow);
+        var command = new CreateTransactionCommand("Mercado", 150m, "USD", "Compras", Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var result = _validator.TestValidate(command);
 
@@ -30,7 +30,7 @@ public class CreateTransactionCommandValidatorTests
     [Fact]
     public void Validate_WithEmptyTitle_ShouldHaveErrorForTitle()
     {
-        var command = new CreateTransactionCommand(string.Empty, 150m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+        var command = new CreateTransactionCommand(string.Empty, 150m, "USD", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var result = _validator.TestValidate(command);
 
@@ -40,7 +40,7 @@ public class CreateTransactionCommandValidatorTests
     [Fact]
     public void Validate_WithNonPositiveAmount_ShouldHaveErrorForAmount()
     {
-        var command = new CreateTransactionCommand("Mercado", 0m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+        var command = new CreateTransactionCommand("Mercado", 0m, "USD", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var result = _validator.TestValidate(command);
 
@@ -50,7 +50,7 @@ public class CreateTransactionCommandValidatorTests
     [Fact]
     public void Validate_WithUnknownCurrencyCode_ShouldHaveErrorForCurrencyCode()
     {
-        var command = new CreateTransactionCommand("Mercado", 150m, "XYZ", null, Guid.NewGuid(), null, DateTime.UtcNow);
+        var command = new CreateTransactionCommand("Mercado", 150m, "XYZ", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var result = _validator.TestValidate(command);
 
@@ -60,7 +60,7 @@ public class CreateTransactionCommandValidatorTests
     [Fact]
     public void Validate_WithEmptyCategoryId_ShouldHaveErrorForCategoryId()
     {
-        var command = new CreateTransactionCommand("Mercado", 150m, "USD", null, Guid.Empty, null, DateTime.UtcNow);
+        var command = new CreateTransactionCommand("Mercado", 150m, "USD", null, Guid.Empty, null, null, DateTime.UtcNow);
 
         var result = _validator.TestValidate(command);
 

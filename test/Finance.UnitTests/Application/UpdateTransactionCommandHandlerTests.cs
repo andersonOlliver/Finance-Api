@@ -19,6 +19,7 @@ public class UpdateTransactionCommandHandlerTests
             userId,
             categoryId,
             null,
+            null,
             DateTime.UtcNow,
             DateTime.UtcNow);
 
@@ -33,7 +34,7 @@ public class UpdateTransactionCommandHandlerTests
         _harness.TransactionRepository.GetByIdAsync(transaction.Id, Arg.Any<CancellationToken>()).Returns(transaction);
 
         var command = new UpdateTransactionCommand(
-            transaction.Id, "Mercado atualizado", 200m, "USD", null, categoryId, null, DateTime.UtcNow);
+            transaction.Id, "Mercado atualizado", 200m, "USD", null, categoryId, null, null, DateTime.UtcNow);
 
         var result = await _harness.Sender.Send(command);
 
@@ -51,7 +52,7 @@ public class UpdateTransactionCommandHandlerTests
         _harness.TransactionRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Transaction?)null);
 
         var command = new UpdateTransactionCommand(
-            Guid.NewGuid(), "Mercado", 150m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+            Guid.NewGuid(), "Mercado", 150m, "USD", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var result = await _harness.Sender.Send(command);
 
@@ -70,7 +71,7 @@ public class UpdateTransactionCommandHandlerTests
         _harness.TransactionRepository.GetByIdAsync(transaction.Id, Arg.Any<CancellationToken>()).Returns(transaction);
 
         var command = new UpdateTransactionCommand(
-            transaction.Id, "Mercado", 150m, "USD", null, transaction.CategoryId, null, DateTime.UtcNow);
+            transaction.Id, "Mercado", 150m, "USD", null, transaction.CategoryId, null, null, DateTime.UtcNow);
 
         var result = await _harness.Sender.Send(command);
 
@@ -82,7 +83,7 @@ public class UpdateTransactionCommandHandlerTests
     public async Task Handle_WithInvalidAmount_ShouldThrowValidationException()
     {
         var command = new UpdateTransactionCommand(
-            Guid.NewGuid(), "Mercado", -10m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+            Guid.NewGuid(), "Mercado", -10m, "USD", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var act = () => _harness.Sender.Send(command);
 

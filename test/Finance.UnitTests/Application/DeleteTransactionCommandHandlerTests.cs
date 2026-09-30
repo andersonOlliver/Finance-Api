@@ -18,6 +18,7 @@ public class DeleteTransactionCommandHandlerTests
             userId,
             Guid.NewGuid(),
             null,
+            null,
             DateTime.UtcNow,
             DateTime.UtcNow);
 

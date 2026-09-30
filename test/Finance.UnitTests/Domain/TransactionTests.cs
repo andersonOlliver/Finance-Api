@@ -15,10 +15,11 @@ public class TransactionTests
         var userId = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var paymentId = Guid.NewGuid();
+        var vehicleId = Guid.NewGuid();
         var releasedOnUtc = new DateTime(2026, 1, 10, 0, 0, 0, DateTimeKind.Utc);
         var createdOnUtc = new DateTime(2026, 1, 10, 12, 0, 0, DateTimeKind.Utc);
 
-        var transaction = Transaction.Create(id, title, value, description, userId, categoryId, paymentId, releasedOnUtc, createdOnUtc);
+        var transaction = Transaction.Create(id, title, value, description, userId, categoryId, paymentId, vehicleId, releasedOnUtc, createdOnUtc);
 
         transaction.Id.Should().Be(id);
         transaction.Title.Should().Be(title);
@@ -27,6 +28,7 @@ public class TransactionTests
         transaction.UserId.Should().Be(userId);
         transaction.CategoryId.Should().Be(categoryId);
         transaction.PaymentId.Should().Be(paymentId);
+        transaction.VehicleId.Should().Be(vehicleId);
         transaction.ReleasedOnUtc.Should().Be(releasedOnUtc);
         transaction.CreatedOnUtc.Should().Be(createdOnUtc);
         transaction.UpdatedOnUtc.Should().BeNull();
@@ -43,6 +45,7 @@ public class TransactionTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             null,
+            null,
             DateTime.UtcNow,
             DateTime.UtcNow);
 
@@ -50,16 +53,18 @@ public class TransactionTests
         var newValue = new Money(200m, Currency.Usd);
         var newCategoryId = Guid.NewGuid();
         var newPaymentId = Guid.NewGuid();
+        var newVehicleId = Guid.NewGuid();
         var newReleasedOnUtc = DateTime.UtcNow.AddDays(1);
         var updatedOnUtc = DateTime.UtcNow.AddMinutes(5);
 
-        transaction.Update(newTitle, newValue, null, newCategoryId, newPaymentId, newReleasedOnUtc, updatedOnUtc);
+        transaction.Update(newTitle, newValue, null, newCategoryId, newPaymentId, newVehicleId, newReleasedOnUtc, updatedOnUtc);
 
         transaction.Title.Should().Be(newTitle);
         transaction.Value.Should().Be(newValue);
         transaction.Description.Should().BeNull();
         transaction.CategoryId.Should().Be(newCategoryId);
         transaction.PaymentId.Should().Be(newPaymentId);
+        transaction.VehicleId.Should().Be(newVehicleId);
         transaction.ReleasedOnUtc.Should().Be(newReleasedOnUtc);
         transaction.UpdatedOnUtc.Should().Be(updatedOnUtc);
     }

@@ -19,7 +19,7 @@ public class CreateTransactionCommandHandlerTests
         _harness.DateTimeProvider.UtcNow.Returns(now);
 
         var command = new CreateTransactionCommand(
-            "Mercado", 150m, "USD", "Compras do mês", Guid.NewGuid(), null, now);
+            "Mercado", 150m, "USD", "Compras do mês", Guid.NewGuid(), null, null, now);
 
         var result = await _harness.Sender.Send(command);
 
@@ -40,7 +40,7 @@ public class CreateTransactionCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldGenerateAVersion7Id()
     {
         var command = new CreateTransactionCommand(
-            "Mercado", 150m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+            "Mercado", 150m, "USD", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var result = await _harness.Sender.Send(command);
 
@@ -51,7 +51,7 @@ public class CreateTransactionCommandHandlerTests
     public async Task Handle_WithEmptyTitle_ShouldThrowValidationException()
     {
         var command = new CreateTransactionCommand(
-            string.Empty, 150m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+            string.Empty, 150m, "USD", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var act = () => _harness.Sender.Send(command);
 
@@ -63,7 +63,7 @@ public class CreateTransactionCommandHandlerTests
     public async Task Handle_WithNonPositiveAmount_ShouldThrowValidationException()
     {
         var command = new CreateTransactionCommand(
-            "Mercado", 0m, "USD", null, Guid.NewGuid(), null, DateTime.UtcNow);
+            "Mercado", 0m, "USD", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var act = () => _harness.Sender.Send(command);
 
@@ -74,7 +74,7 @@ public class CreateTransactionCommandHandlerTests
     public async Task Handle_WithInvalidCurrencyCode_ShouldThrowValidationException()
     {
         var command = new CreateTransactionCommand(
-            "Mercado", 150m, "XYZ", null, Guid.NewGuid(), null, DateTime.UtcNow);
+            "Mercado", 150m, "XYZ", null, Guid.NewGuid(), null, null, DateTime.UtcNow);
 
         var act = () => _harness.Sender.Send(command);
 
@@ -85,7 +85,7 @@ public class CreateTransactionCommandHandlerTests
     public async Task Handle_WithEmptyCategoryId_ShouldThrowValidationException()
     {
         var command = new CreateTransactionCommand(
-            "Mercado", 150m, "USD", null, Guid.Empty, null, DateTime.UtcNow);
+            "Mercado", 150m, "USD", null, Guid.Empty, null, null, DateTime.UtcNow);
 
         var act = () => _harness.Sender.Send(command);
 
