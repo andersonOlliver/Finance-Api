@@ -18,6 +18,8 @@ public sealed class TransactionResponse
     public Guid? PaymentId { get; init; }
     public string? PaymentName { get; init; }
     public PaymentType? PaymentType { get; init; }
+    public Guid? VehicleId { get; init; }
+    public string? VehicleNickname { get; init; }
     public DateTime ReleasedOnUtc { get; init; }
     public DateTime CreatedOnUtc { get; init; }
     public DateTime? UpdatedOnUtc { get; init; }

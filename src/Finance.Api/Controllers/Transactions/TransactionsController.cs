@@ -22,9 +22,10 @@ public class TransactionsController(ISender sender) : ControllerBase
         [FromQuery] DateTime? to,
         [FromQuery] Guid? categoryId,
         [FromQuery] Guid? paymentId,
+        [FromQuery] Guid? vehicleId,
         CancellationToken cancellationToken)
     {
-        var query = new SearchTransactionsQuery(from, to, categoryId, paymentId);
+        var query = new SearchTransactionsQuery(from, to, categoryId, paymentId, vehicleId);
         var result = await sender.Send(query, cancellationToken);
         return Ok(result.Value);
     }
@@ -48,6 +49,7 @@ public class TransactionsController(ISender sender) : ControllerBase
             request.Description,
             request.CategoryId,
             request.PaymentId,
+            request.VehicleId,
             request.ReleasedOnUtc);
 
         var result = await sender.Send(command, cancellationToken);
@@ -68,6 +70,7 @@ public class TransactionsController(ISender sender) : ControllerBase
             request.Description,
             request.CategoryId,
             request.PaymentId,
+            request.VehicleId,
             request.ReleasedOnUtc);
 
         var result = await sender.Send(command, cancellationToken);

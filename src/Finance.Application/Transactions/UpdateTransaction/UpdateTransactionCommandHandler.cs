@@ -38,6 +38,7 @@ internal sealed class UpdateTransactionCommandHandler(
             description,
             request.CategoryId,
             request.PaymentId,
+            request.VehicleId,
             request.ReleasedOnUtc,
             dateTimeProvider.UtcNow);
 

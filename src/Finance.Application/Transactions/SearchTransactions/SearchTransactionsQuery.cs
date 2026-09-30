@@ -6,4 +6,5 @@ public sealed record SearchTransactionsQuery(
     DateTime? From,
     DateTime? To,
     Guid? CategoryId,
-    Guid? PaymentId) : IQuery<IReadOnlyList<TransactionResponse>>;
+    Guid? PaymentId,
+    Guid? VehicleId) : IQuery<IReadOnlyList<TransactionResponse>>;

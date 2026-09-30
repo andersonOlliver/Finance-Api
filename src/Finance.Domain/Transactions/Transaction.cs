@@ -12,6 +12,7 @@ public sealed class Transaction : Entity
         Guid userId,
         Guid categoryId,
         Guid? paymentId,
+        Guid? vehicleId,
         DateTime releasedOnUtc,
         DateTime createdOnUtc
         )
@@ -25,6 +26,7 @@ public sealed class Transaction : Entity
         UserId = userId;
         CategoryId = categoryId;
         PaymentId = paymentId;
+        VehicleId = vehicleId;
     }
 
     private Transaction() { }
@@ -35,6 +37,7 @@ public sealed class Transaction : Entity
     public Guid UserId { get; init; }
     public Guid CategoryId { get; private set; }
     public Guid? PaymentId { get; private set; }
+    public Guid? VehicleId { get; private set; }
     public DateTime ReleasedOnUtc { get; private set; }
     public DateTime CreatedOnUtc { get; init; }
     public DateTime? UpdatedOnUtc { get; private set; }
@@ -46,10 +49,11 @@ public sealed class Transaction : Entity
         Guid userId,
         Guid categoryId,
         Guid? paymentId,
+        Guid? vehicleId,
         DateTime releasedOnUtc,
         DateTime createdOnUtc)
     {
-        return new Transaction(id, title, value, description, userId, categoryId, paymentId, releasedOnUtc, createdOnUtc);
+        return new Transaction(id, title, value, description, userId, categoryId, paymentId, vehicleId, releasedOnUtc, createdOnUtc);
     }
 
     public void Update(
@@ -58,6 +62,7 @@ public sealed class Transaction : Entity
         Description? description,
         Guid categoryId,
         Guid? paymentId,
+        Guid? vehicleId,
         DateTime releasedOnUtc,
         DateTime updatedOnUtc)
     {
@@ -66,6 +71,7 @@ public sealed class Transaction : Entity
         Description = description;
         CategoryId = categoryId;
         PaymentId = paymentId;
+        VehicleId = vehicleId;
         ReleasedOnUtc = releasedOnUtc;
         UpdatedOnUtc = updatedOnUtc;
     }

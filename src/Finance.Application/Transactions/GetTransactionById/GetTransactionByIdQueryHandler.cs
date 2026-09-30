@@ -31,12 +31,15 @@ internal sealed class GetTransactionByIdQueryHandler(
                 t.payment_id AS PaymentId,
                 p.name AS PaymentName,
                 p.type AS PaymentType,
+                t.vehicle_id AS VehicleId,
+                v.nickname AS VehicleNickname,
                 t.released_on_utc AS ReleasedOnUtc,
                 t.created_on_utc AS CreatedOnUtc,
                 t.updated_on_utc AS UpdatedOnUtc
             FROM transactions AS t
             INNER JOIN categories AS c ON c.id = t.category_id
             LEFT JOIN payments AS p ON p.id = t.payment_id
+            LEFT JOIN vehicles AS v ON v.id = t.vehicle_id
             WHERE t.id = @Id AND t.user_id = @UserId
             """;
 

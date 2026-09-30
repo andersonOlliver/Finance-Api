@@ -33,6 +33,7 @@ internal sealed class CreateTransactionCommandHandler(
             userContext.UserId,
             request.CategoryId,
             request.PaymentId,
+            request.VehicleId,
             request.ReleasedOnUtc,
             dateTimeProvider.UtcNow);
 

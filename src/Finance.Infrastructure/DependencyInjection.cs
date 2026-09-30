@@ -6,6 +6,7 @@ using Finance.Domain.Categories;
 using Finance.Domain.Payments;
 using Finance.Domain.Transactions;
 using Finance.Domain.Users;
+using Finance.Domain.Vehicles;
 using Finance.Infrastructure.Authentication;
 using Finance.Infrastructure.Authentication.Models;
 using Finance.Infrastructure.Clock;
@@ -31,6 +32,8 @@ public static class DependencyInjection
             .AddScoped<ITransactionRepository, TransactionRepository>()
             .AddScoped<ICategoryRepository, CategoryRepository>()
             .AddScoped<IPaymentRepository, PaymentRepository>()
+            .AddScoped<IVehicleRepository, VehicleRepository>()
+            .AddScoped<IVehicleRefuelRepository, VehicleRefuelRepository>()
             .AddTransient<IDateTimeProvider, DateTimeProvider>()
             .AddPersistence(configuration)
             .AddIdentity(configuration);

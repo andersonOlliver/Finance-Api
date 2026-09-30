@@ -2,6 +2,7 @@
 using Finance.Domain.Payments;
 using Finance.Domain.Transactions;
 using Finance.Domain.Users;
+using Finance.Domain.Vehicles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -45,5 +46,10 @@ internal sealed class TransactionConfiguration : IEntityTypeConfiguration<Transa
             .HasForeignKey(b => b.PaymentId)
             .IsRequired(false);
 
+        builder.HasOne<Vehicle>()
+            .WithMany()
+            .HasForeignKey(b => b.VehicleId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
     }
 }

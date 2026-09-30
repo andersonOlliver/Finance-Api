@@ -7,4 +7,5 @@ public sealed record CreateTransactionRequest(
     string? Description,
     Guid CategoryId,
     Guid? PaymentId,
+    Guid? VehicleId,
     DateTime ReleasedOnUtc);

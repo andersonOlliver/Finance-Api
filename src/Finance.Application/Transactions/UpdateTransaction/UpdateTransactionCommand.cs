@@ -10,4 +10,5 @@ public sealed record UpdateTransactionCommand(
     string? Description,
     Guid CategoryId,
     Guid? PaymentId,
+    Guid? VehicleId,
     DateTime ReleasedOnUtc) : ICommand;
