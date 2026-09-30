@@ -3,6 +3,8 @@ using Finance.Application.Abstractions.Authentication;
 using Finance.Application.Abstractions.Clock;
 using Finance.Domain.Abstracts;
 using Finance.Domain.Categories;
+using Finance.Domain.CreditCards;
+using Finance.Domain.Installments;
 using Finance.Domain.Payments;
 using Finance.Domain.Transactions;
 using Finance.Domain.Vehicles;
@@ -19,6 +21,8 @@ internal sealed class ApplicationTestHarness
     public IPaymentRepository PaymentRepository { get; } = Substitute.For<IPaymentRepository>();
     public IVehicleRepository VehicleRepository { get; } = Substitute.For<IVehicleRepository>();
     public IVehicleRefuelRepository VehicleRefuelRepository { get; } = Substitute.For<IVehicleRefuelRepository>();
+    public ICreditCardRepository CreditCardRepository { get; } = Substitute.For<ICreditCardRepository>();
+    public IInstallmentPurchaseRepository InstallmentPurchaseRepository { get; } = Substitute.For<IInstallmentPurchaseRepository>();
     public IUserContext UserContext { get; } = Substitute.For<IUserContext>();
     public IDateTimeProvider DateTimeProvider { get; } = Substitute.For<IDateTimeProvider>();
     public IUnitOfWork UnitOfWork { get; } = Substitute.For<IUnitOfWork>();
@@ -35,6 +39,8 @@ internal sealed class ApplicationTestHarness
         services.AddSingleton(PaymentRepository);
         services.AddSingleton(VehicleRepository);
         services.AddSingleton(VehicleRefuelRepository);
+        services.AddSingleton(CreditCardRepository);
+        services.AddSingleton(InstallmentPurchaseRepository);
         services.AddSingleton(UserContext);
         services.AddSingleton(DateTimeProvider);
         services.AddSingleton(UnitOfWork);
