@@ -1,4 +1,6 @@
 ﻿using Finance.Domain.Categories;
+using Finance.Domain.CreditCards;
+using Finance.Domain.Installments;
 using Finance.Domain.Payments;
 using Finance.Domain.Transactions;
 using Finance.Domain.Users;
@@ -49,6 +51,18 @@ internal sealed class TransactionConfiguration : IEntityTypeConfiguration<Transa
         builder.HasOne<Vehicle>()
             .WithMany()
             .HasForeignKey(b => b.VehicleId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
+
+        builder.HasOne<InstallmentPurchase>()
+            .WithMany()
+            .HasForeignKey(b => b.InstallmentPurchaseId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
+
+        builder.HasOne<CreditCard>()
+            .WithMany()
+            .HasForeignKey(b => b.CreditCardId)
             .OnDelete(DeleteBehavior.SetNull)
             .IsRequired(false);
     }
