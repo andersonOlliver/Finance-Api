@@ -13,9 +13,16 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         }
         catch (Exception exception)
         {
-            logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
-
             var exceptionDetails = GetExceptionDetails(exception);
+
+            if (exceptionDetails.Status >= StatusCodes.Status500InternalServerError)
+            {
+                logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
+            }
+            else
+            {
+                logger.LogWarning(exception, "Exception occurred: {Message}", exception.Message);
+            }
 
             var problemDetails = new ProblemDetails
             {

@@ -1,4 +1,5 @@
 using Finance.Api.Extensions;
+using Finance.Api.Middleware;
 using Finance.Application;
 using Finance.Infrastructure;
 using Finance.Infrastructure.Authentication;
@@ -7,7 +8,9 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, configuration) =>
-    configuration.ReadFrom.Configuration(context.Configuration));
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName));
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -31,6 +34,8 @@ if (app.Environment.IsDevelopment())
 
     app.ApplyMigrations();
 }
+
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -1,5 +1,6 @@
 using Finance.Domain.Users;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Serilog.Context;
 
 namespace Finance.Infrastructure.Authentication;
@@ -11,7 +12,7 @@ namespace Finance.Infrastructure.Authentication;
 /// pushes it onto the Serilog <see cref="LogContext"/> as "CurrentUserId" so every log line for
 /// the request — including the request-completed summary — can be filtered by user in production.
 /// </summary>
-public sealed class CurrentUserMiddleware(RequestDelegate next)
+public sealed class CurrentUserMiddleware(RequestDelegate next, ILogger<CurrentUserMiddleware> logger)
 {
     internal const string HttpContextItemKey = "CurrentUserId";
 
@@ -32,6 +33,10 @@ public sealed class CurrentUserMiddleware(RequestDelegate next)
                     return;
                 }
             }
+
+            logger.LogWarning(
+                "Authenticated request with identity {IdentityId} has no matching application user",
+                identityId);
         }
 
         await next(context);
