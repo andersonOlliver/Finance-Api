@@ -26,7 +26,7 @@ public class PaymentOwnershipTests(DatabaseFixture fixture)
             new LastName("User"),
             new Email($"user-{Guid.NewGuid():N}@test.local"),
             DateTime.UtcNow);
-        user.SetIdentityId(string.Empty);
+        user.SetIdentityId(Guid.NewGuid().ToString());
 
         dbContext.Set<User>().Add(user);
         await dbContext.SaveChangesWithoutEventsAsync();

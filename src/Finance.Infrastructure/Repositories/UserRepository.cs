@@ -1,4 +1,5 @@
 ﻿using Finance.Domain.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace Finance.Infrastructure.Repositories;
 
@@ -13,4 +14,9 @@ internal class UserRepository(ApplicationDbContext context) : Repository<User>(c
 
     //    DbContext.Add(user);
     //}
+
+    public Task<User?> GetByIdentityIdAsync(string identityId, CancellationToken cancellationToken = default)
+    {
+        return DbContext.Set<User>().FirstOrDefaultAsync(u => u.IdentityId == identityId, cancellationToken);
+    }
 }

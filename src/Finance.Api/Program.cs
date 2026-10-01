@@ -1,6 +1,7 @@
 using Finance.Api.Extensions;
 using Finance.Application;
 using Finance.Infrastructure;
+using Finance.Infrastructure.Authentication;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCustomExceptionHandler();
+
+app.UseAuthentication();
+
+app.UseMiddleware<CurrentUserMiddleware>();
 
 app.UseSerilogRequestLogging();
 

@@ -177,19 +177,6 @@
             "description": "Só é possível atualizar uma categoria própria (não uma padrão)."
           },
           "response": []
-        },
-        {
-          "name": "Delete Category",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "categories", "{{categoryId}}" ]
-            }
-          },
-          "response": []
         }
       ]
     },
@@ -265,19 +252,6 @@
               "raw": "{\n  \"name\": \"Cartão Nubank Ultravioleta\",\n  \"type\": 2\n}",
               "options": { "raw": { "language": "json" } }
             },
-            "url": {
-              "raw": "{{baseUrl}}/api/payments/{{paymentId}}",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "payments", "{{paymentId}}" ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Payment",
-          "request": {
-            "method": "DELETE",
-            "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/payments/{{paymentId}}",
               "host": [ "{{baseUrl}}" ],
@@ -473,19 +447,6 @@
           "response": []
         },
         {
-          "name": "Delete Vehicle",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "vehicles", "{{vehicleId}}" ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Search Refuels",
           "request": {
             "method": "GET",
@@ -599,20 +560,6 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "Delete Credit Card",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/credit-cards/{{creditCardId}}",
-              "host": [ "{{baseUrl}}" ],
-              "path": [ "api", "credit-cards", "{{creditCardId}}" ]
-            },
-            "description": "Falha se o cartão ainda tiver parcelamentos ativos (restrição de integridade)."
-          },
-          "response": []
         }
       ]
     },
@@ -695,6 +642,64 @@
               "path": [ "api", "installment-purchases", "{{installmentPurchaseId}}" ]
             },
             "description": "Cancela o plano inteiro e todas as suas parcelas (lançamentos) em cascata."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cleanup",
+      "description": "Exclui os registros criados pela collection. Fica por último porque Transactions, Refuels e Installment Purchases ainda precisam de categoryId/paymentId/vehicleId/creditCardId vivos durante a execução.",
+      "item": [
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "categories", "{{categoryId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Payment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/{{paymentId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "payments", "{{paymentId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vehicle",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles", "{{vehicleId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Credit Card",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/credit-cards/{{creditCardId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "credit-cards", "{{creditCardId}}" ]
+            }
           },
           "response": []
         }
