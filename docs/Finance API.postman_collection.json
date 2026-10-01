@@ -1,0 +1,704 @@
+{
+  "info": {
+    "_postman_id": "f3b1a0b2-2b1b-4e8a-9b2a-7a1c6f0d9a10",
+    "name": "Finance API",
+    "description": "Collection com exemplos reais de chamadas para todos os endpoints da Finance API.\n\n## Como usar\n1. Rode `docker compose up -d` (veja o README do projeto).\n2. Execute **Auth > Register** uma vez (ou use um usuário já existente).\n3. Execute **Auth > Login** — o token é capturado automaticamente na variável de coleção `accessToken` e reutilizado em todas as outras requisições.\n4. As requisições \"Create ...\" capturam automaticamente o id criado (ex.: `categoryId`, `transactionId`) nas variáveis de coleção, para encadear as próximas chamadas (Get/Update/Delete) sem precisar copiar nada manualmente.\n\n## Observações sobre os dados\n- **Moeda**: o domínio hoje só aceita `USD`, `EUR` ou `BLR` como `currencyCode` (não há `BRL`) — os exemplos usam `USD`.\n- **Enums são enviados como número** (não há conversão para string configurada na API):\n  - `CategoryType`: `1` = Expense (despesa), `2` = Receive (receita)\n  - `PaymentType`: `1` = Debit, `2` = CashCredit (crédito à vista), `3` = InstallmentCredit, `4` = Money, `5` = Slip (boleto), `6` = Pix\n  - `VehicleType`: `1` = Car, `2` = Motorcycle\n- Categorias e formas de pagamento têm registros **padrão** (compartilhados) além dos criados pelo próprio usuário; veículos e cartões de crédito são sempre exclusivos de quem está autenticado.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{accessToken}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "accessToken", "value": "", "type": "string" },
+    { "key": "categoryId", "value": "", "type": "string" },
+    { "key": "paymentId", "value": "", "type": "string" },
+    { "key": "transactionId", "value": "", "type": "string" },
+    { "key": "vehicleId", "value": "", "type": "string" },
+    { "key": "creditCardId", "value": "", "type": "string" },
+    { "key": "installmentPurchaseId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Cadastro, login (emite o JWT via Keycloak) e dados do usuário autenticado.",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana.silva@example.com\",\n  \"firstName\": \"Ana\",\n  \"lastName\": \"Silva\",\n  \"password\": \"SenhaForte123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/register",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "users", "register" ]
+            },
+            "description": "Cria o usuário tanto no Keycloak quanto no banco local da API."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', body.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana.silva@example.com\",\n  \"password\": \"SenhaForte123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/login",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "users", "login" ]
+            },
+            "description": "Autentica contra o Keycloak e retorna `{ accessToken }`. O token é salvo automaticamente na variável de coleção `accessToken`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Logged-in User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "users", "me" ]
+            },
+            "description": "Retorna id, nome e e-mail do usuário dono do token enviado."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "description": "Categorias de lançamento (ex.: Alimentação, Salário). Existem categorias padrão (sem dono) visíveis para todos, além das criadas pelo próprio usuário.",
+      "item": [
+        {
+          "name": "Search Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "categories" ]
+            },
+            "description": "Lista as categorias padrão + as próprias do usuário autenticado."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('categoryId', pm.response.json());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alimentação\",\n  \"type\": 1,\n  \"color\": \"F2994A\",\n  \"icon\": \"restaurant\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "categories" ]
+            },
+            "description": "`type`: 1 = Expense, 2 = Receive. O id retornado é salvo em `categoryId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "categories", "{{categoryId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alimentação e mercado\",\n  \"type\": 1,\n  \"color\": \"F2994A\",\n  \"icon\": \"restaurant\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "categories", "{{categoryId}}" ]
+            },
+            "description": "Só é possível atualizar uma categoria própria (não uma padrão)."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "categories", "{{categoryId}}" ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "description": "Formas de pagamento (ex.: Cartão Nubank, Pix, Dinheiro). Também há registros padrão além dos próprios do usuário.",
+      "item": [
+        {
+          "name": "Search Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/payments",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "payments" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('paymentId', pm.response.json());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cartão Nubank\",\n  \"type\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payments",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "payments" ]
+            },
+            "description": "`type`: 1 = Debit, 2 = CashCredit, 3 = InstallmentCredit, 4 = Money, 5 = Slip, 6 = Pix. O id retornado é salvo em `paymentId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payment By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/{{paymentId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "payments", "{{paymentId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Payment",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cartão Nubank Ultravioleta\",\n  \"type\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/{{paymentId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "payments", "{{paymentId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Payment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/payments/{{paymentId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "payments", "{{paymentId}}" ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "description": "Lançamentos (receitas/despesas). Podem ser filtrados por período, categoria, forma de pagamento e veículo.",
+      "item": [
+        {
+          "name": "Search Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?from=2026-01-01&to=2026-12-31&categoryId={{categoryId}}&paymentId={{paymentId}}&vehicleId={{vehicleId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "transactions" ],
+              "query": [
+                { "key": "from", "value": "2026-01-01" },
+                { "key": "to", "value": "2026-12-31" },
+                { "key": "categoryId", "value": "{{categoryId}}" },
+                { "key": "paymentId", "value": "{{paymentId}}" },
+                { "key": "vehicleId", "value": "{{vehicleId}}" }
+              ]
+            },
+            "description": "Todos os filtros de query são opcionais. Remova os que não quiser usar."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Transaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('transactionId', pm.response.json());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mercado\",\n  \"amount\": 150.00,\n  \"currencyCode\": \"USD\",\n  \"description\": \"Compras do mês\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"paymentId\": \"{{paymentId}}\",\n  \"vehicleId\": null,\n  \"releasedOnUtc\": \"2026-06-10T00:00:00Z\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "transactions" ]
+            },
+            "description": "`paymentId` e `vehicleId` são opcionais. O id retornado é salvo em `transactionId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/{{transactionId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "transactions", "{{transactionId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mercado do mês\",\n  \"amount\": 180.50,\n  \"currencyCode\": \"USD\",\n  \"description\": \"Compras do mês, incluindo churrasco\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"paymentId\": \"{{paymentId}}\",\n  \"vehicleId\": null,\n  \"releasedOnUtc\": \"2026-06-10T00:00:00Z\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/{{transactionId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "transactions", "{{transactionId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/{{transactionId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "transactions", "{{transactionId}}" ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "description": "Veículos do usuário e seus abastecimentos. Abastecer gera automaticamente um lançamento, atualiza a quilometragem do veículo e calcula o consumo (km/L) desde o abastecimento anterior.",
+      "item": [
+        {
+          "name": "Search Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Vehicle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('vehicleId', pm.response.json());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nickname\": \"Meu Civic\",\n  \"type\": 1,\n  \"brand\": \"Honda\",\n  \"model\": \"Civic\",\n  \"color\": \"Prata\",\n  \"year\": 2020,\n  \"licensePlate\": \"ABC1D23\",\n  \"initialMileage\": 15000\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles" ]
+            },
+            "description": "`type`: 1 = Car, 2 = Motorcycle. O id retornado é salvo em `vehicleId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vehicle By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles", "{{vehicleId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vehicle",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nickname\": \"Civic da família\",\n  \"type\": 1,\n  \"brand\": \"Honda\",\n  \"model\": \"Civic EXL\",\n  \"color\": \"Preto\",\n  \"year\": 2021,\n  \"licensePlate\": \"ABC1D23\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles", "{{vehicleId}}" ]
+            },
+            "description": "Não inclui quilometragem — ela só avança através de abastecimentos."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vehicle",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles", "{{vehicleId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Refuels",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}/refuels",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles", "{{vehicleId}}", "refuels" ]
+            },
+            "description": "Histórico de abastecimentos do veículo, com o consumo calculado em cada um."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Refuel",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"liters\": 40,\n  \"pricePerLiter\": 5.89,\n  \"currencyCode\": \"USD\",\n  \"mileage\": 15400,\n  \"categoryId\": \"{{categoryId}}\",\n  \"paymentId\": \"{{paymentId}}\",\n  \"description\": \"Posto Ipiranga\",\n  \"releasedOnUtc\": \"2026-06-15T00:00:00Z\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}/refuels",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "vehicles", "{{vehicleId}}", "refuels" ]
+            },
+            "description": "`mileage` tem que ser maior que a quilometragem atual do veículo. Gera um lançamento, atualiza a quilometragem do veículo e retorna o consumo (km/L) desde o último abastecimento."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Credit Cards",
+      "description": "Cartões de crédito do usuário — só apelido, bandeira e dia de vencimento (nunca número ou CVV).",
+      "item": [
+        {
+          "name": "Search Credit Cards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/credit-cards",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "credit-cards" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Credit Card",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('creditCardId', pm.response.json());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nickname\": \"Nubank\",\n  \"brand\": \"Mastercard\",\n  \"dueDay\": 10\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/credit-cards",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "credit-cards" ]
+            },
+            "description": "`dueDay` é o dia do mês do vencimento da fatura (1 a 31). O id retornado é salvo em `creditCardId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Credit Card By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/credit-cards/{{creditCardId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "credit-cards", "{{creditCardId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Credit Card",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nickname\": \"Nubank Ultravioleta\",\n  \"brand\": \"Mastercard\",\n  \"dueDay\": 15\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/credit-cards/{{creditCardId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "credit-cards", "{{creditCardId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Credit Card",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/credit-cards/{{creditCardId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "credit-cards", "{{creditCardId}}" ]
+            },
+            "description": "Falha se o cartão ainda tiver parcelamentos ativos (restrição de integridade)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Installment Purchases",
+      "description": "Compras parceladas no cartão de crédito. Criar uma gera um lançamento por parcela; a busca mostra qual parcela de cada compra está ativa em um determinado mês (ex.: \"5/12\").",
+      "item": [
+        {
+          "name": "Search Installment Purchases",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/installment-purchases?month=2026-06-01&creditCardId={{creditCardId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "installment-purchases" ],
+              "query": [
+                { "key": "month", "value": "2026-06-01" },
+                { "key": "creditCardId", "value": "{{creditCardId}}" }
+              ]
+            },
+            "description": "`month` é opcional (padrão: mês atual) — qualquer data dentro do mês desejado serve. `creditCardId` também é opcional."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Installment Purchase",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('installmentPurchaseId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Notebook Dell\",\n  \"totalAmount\": 3600.00,\n  \"currencyCode\": \"USD\",\n  \"installmentCount\": 12,\n  \"categoryId\": \"{{categoryId}}\",\n  \"creditCardId\": \"{{creditCardId}}\",\n  \"description\": \"Compra parcelada\",\n  \"firstInstallmentReleasedOnUtc\": null\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/installment-purchases",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "installment-purchases" ]
+            },
+            "description": "`firstInstallmentReleasedOnUtc` é opcional: se omitido (ou `null`), usa o próximo vencimento do cartão. Se informado, tem que ser igual ou posterior a esse vencimento — útil para promoções do tipo \"pague só a partir de X\"."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Installment Purchase By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/installment-purchases/{{installmentPurchaseId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "installment-purchases", "{{installmentPurchaseId}}" ]
+            },
+            "description": "Mostra o plano completo com todas as parcelas geradas."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Installment Purchase",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/installment-purchases/{{installmentPurchaseId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "installment-purchases", "{{installmentPurchaseId}}" ]
+            },
+            "description": "Cancela o plano inteiro e todas as suas parcelas (lançamentos) em cascata."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
